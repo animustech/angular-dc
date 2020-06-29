@@ -79,9 +79,25 @@ angularDc.directive('dcChart', [
             return chart;
         }
 
-        function getValidOptionsForChart(chart) {
+        function _getAllPropertyNames(obj)
+        {
+          var props = []
+          while (obj = Object.getPrototypeOf(obj))
+          {
+            Object.getOwnPropertyNames(obj).forEach(function (prop)
+            {
+              if (props.indexOf( prop ) === -1) { props.push(prop) }
+            })
+          }
+          return props
+        }
+
+        function getValidOptionsForChart(chart)
+        {
             // all chart options are exposed via a function
-            return _(chart).functions().extend(directiveOptions).map(function(s) {
+            // dc.js v4 follows the OO model, not all the options are exposed on the main class
+            // as functions any more
+            return _(_getAllPropertyNames(chart)).extend(directiveOptions).map(function(s) {
                 return 'dc' + s.charAt(0).toUpperCase() + s.substring(1);
             }).value();
         }
